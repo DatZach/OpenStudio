@@ -8,13 +8,22 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+LIBS	+= -L$$[QT_INSTALL_LIBS] -lqscintilla2
+
 TARGET = OpenStudio
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    customwidgets/qttoolbar.cpp \
+    dialogs/templatedialog.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    customwidgets/qttoolbar.h \
+    dialogs/templatedialog.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
+
+RESOURCES += \
+    iconsres.qrc

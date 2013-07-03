@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/application.png</file>
+        <file>icons/application_form.png</file>
+        <file>icons/application_xp_terminal.png</file>
+        <file>icons/page_white_cplusplus.png</file>
+        <file>icons/page_white_csharp.png</file>
+        <file>icons/page_white_h.png</file>
+        <file>icons/page_white_visualstudio.png</file>
+        <file>icons/page_white_add.png</file>
+        <file>icons/folder.png</file>
+    </qresource>
+</RCC>
