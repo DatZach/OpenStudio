@@ -1,3 +1,13 @@
+# Qt Studio Garbage
+build
+*.pro.user.*
+*.manifest
+
+# MSVC Garbage
+*.ilk
+*.pdb
+*.obj
+
 # Compiled Object files
 *.slo
 *.lo
