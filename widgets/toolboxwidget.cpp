@@ -1,6 +1,6 @@
 /**
-* @file  main.cpp
-* @brief Source implementing the main entry point of the application.
+* @file  toolboxwidget.cpp
+* @brief Source implementing a class for a tool box widget.
 *
 * @section License
 *
@@ -22,16 +22,24 @@
 **/
 
 
-#include "mainwindow.h"
-#include <QApplication>
+#include "toolboxwidget.h"
 
-int main(int argc, char *argv[])
+ToolBoxWidget::ToolBoxWidget(QWidget *parent) :
+    QWidget(parent)
 {
-    QApplication a(argc, argv);
-    // this style sheet removes those ugly borders on status bar items
-    a.setStyleSheet("QTabBar::tab { background-color: white; color: black; height: 24px; } QTabBar::tab:selected { background-color: #1B91E0; color: white; }");
-    MainWindow w;
-    w.show();
-    
-    return a.exec();
+
+    QVBoxLayout* layout = new QVBoxLayout();
+    QLineEdit* searchEdit = new QLineEdit();
+    searchEdit->setText("Filter...");
+    searchEdit->setFont(QFont("Ubuntu", -1, -1, true));
+    QListWidget* toolList = new QListWidget();
+    layout->addWidget(searchEdit);
+    layout->addWidget(toolList);
+    layout->setContentsMargins(3, 3, 3, 3);
+    this->setLayout(layout);
+}
+
+ToolBoxWidget::~ToolBoxWidget()
+{
+
 }

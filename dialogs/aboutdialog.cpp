@@ -1,6 +1,6 @@
 /**
-* @file  main.cpp
-* @brief Source implementing the main entry point of the application.
+* @file  aboutdialog.cpp
+* @brief Source implementing a class for an about dialog.
 *
 * @section License
 *
@@ -21,17 +21,17 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include "aboutdialog.h"
+#include "ui_aboutdialog.h"
 
-#include "mainwindow.h"
-#include <QApplication>
-
-int main(int argc, char *argv[])
+AboutDialog::AboutDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::AboutDialog)
 {
-    QApplication a(argc, argv);
-    // this style sheet removes those ugly borders on status bar items
-    a.setStyleSheet("QTabBar::tab { background-color: white; color: black; height: 24px; } QTabBar::tab:selected { background-color: #1B91E0; color: white; }");
-    MainWindow w;
-    w.show();
-    
-    return a.exec();
+    ui->setupUi(this);
+}
+
+AboutDialog::~AboutDialog()
+{
+    delete ui;
 }

@@ -1,6 +1,6 @@
 /**
-* @file  main.cpp
-* @brief Source implementing the main entry point of the application.
+* @file  welcomewidget.cpp
+* @brief Source implementing a class for a welcome widget.
 *
 * @section License
 *
@@ -21,17 +21,18 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include "welcomewidget.h"
+#include "ui_welcomewidget.h"
 
-#include "mainwindow.h"
-#include <QApplication>
-
-int main(int argc, char *argv[])
+WelcomeWidget::WelcomeWidget(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::WelcomeWidget)
 {
-    QApplication a(argc, argv);
-    // this style sheet removes those ugly borders on status bar items
-    a.setStyleSheet("QTabBar::tab { background-color: white; color: black; height: 24px; } QTabBar::tab:selected { background-color: #1B91E0; color: white; }");
-    MainWindow w;
-    w.show();
-    
-    return a.exec();
+    ui->setupUi(this);
+    this->setWindowTitle("Welcome");
+}
+
+WelcomeWidget::~WelcomeWidget()
+{
+    delete ui;
 }

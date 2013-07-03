@@ -35,11 +35,13 @@
 #include <QMdiArea>
 #include <QDockWidget>
 #include <QTreeWidget>
-#include <Qsci/qsciscintilla.h>
-#include <Qsci/qscilexercpp.h>
 
 #include "customwidgets/qttoolbar.h"
+#include "widgets/toolboxwidget.h"
+#include "widgets/codewidget.h"
+#include "widgets/welcomewidget.h"
 #include "dialogs/templatedialog.h"
+#include "dialogs/aboutdialog.h"
 
 enum {
     MSG_ERROR,
@@ -74,6 +76,8 @@ private:
     QDockWidget* evtDock;
     QDockWidget* treeDock;
     QTreeWidget* treeWidget;
+    ToolBoxWidget* toolWidget;
+    QDockWidget* toolDock;
 
     QTextEdit* outputWidget;
     QDockWidget* outputDock;
@@ -83,6 +87,7 @@ private:
 public slots:
     void newProject();
     void closeApplication();
+    void showAboutDialog();
 };
 
 #endif // MAINWINDOW_H

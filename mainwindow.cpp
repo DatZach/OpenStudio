@@ -37,14 +37,17 @@ MainWindow::MainWindow(QWidget *parent) :
     setCorner( Qt::BottomLeftCorner, Qt::LeftDockWidgetArea );
     setCorner( Qt::BottomRightCorner, Qt::RightDockWidgetArea );
 
-    QAction* newAction = new QAction(QIcon(":icons/icons/page_white_add.png"), "New file or project", this);
+    QAction* newAction = new QAction(QIcon(":icons/icons/page_white_add.png"), "&New file or project", this);
     connect(newAction, SIGNAL(triggered()), this, SLOT(newProject()));
-    QAction* openAction = new QAction(QIcon(":icons/icons/folder.png"), "Open existing file or project", this);
-    QAction* saveAction = new QAction(QIcon(":icons/icons/save.png"), "Save the current file", this);
+    QAction* openAction = new QAction(QIcon(":icons/icons/folder.png"), "&Open existing file or project", this);
+    QAction* saveAction = new QAction(QIcon(":icons/icons/save.png"), "&Save the current file", this);
     QAction* saveasAction = new QAction(QIcon(":icons/icons/save-as.png"), "Open existing file or project", this);
-    QAction* saveallAction = new QAction(QIcon(":icons/icons/save-all.png"), "Save all open files", this);
-    QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "Exit", this);
+    QAction* saveallAction = new QAction(QIcon(":icons/icons/save-all.png"), "Save &All open files", this);
+    QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "&Exit", this);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApplication()));
+
+    QAction* aboutAction = new QAction(QIcon(":icons/icons/help.png"), "&About", this);
+    connect(aboutAction, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 
     mainToolbar = new QtToolBar();
     mainToolbar->addAction(newAction);
@@ -54,10 +57,14 @@ MainWindow::MainWindow(QWidget *parent) :
     mainToolbar->setActionWidgetSize(24, 24);
     this->addToolBar(mainToolbar);
     mainStatusbar = new QStatusBar();
-    mainStatusbar->addWidget(new QLabel("Ready"));
+    QLabel* statusLabel = new QLabel("Ready");
+    mainStatusbar->setStyleSheet("QStatusBar { background-color: #1B91E0; }  QStatusBar::item { border: 0px solid red; border-radius: 3px; }");
+    statusLabel->setStyleSheet("QLabel { background-color: #1B91E0; color: white; }");
+    this->setStyleSheet("QMainWindow { background-color: white; }");
+    mainStatusbar->addWidget(statusLabel);
     this->setStatusBar(mainStatusbar);
     mainMenubar = new QMenuBar();
-    QMenu* fileMenu = new QMenu("File");
+    QMenu* fileMenu = new QMenu("&File");
     fileMenu->addAction(newAction);
     fileMenu->addAction(openAction);
     fileMenu->addAction(saveAction);
@@ -65,11 +72,14 @@ MainWindow::MainWindow(QWidget *parent) :
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
     mainMenubar->addMenu(fileMenu);
-    mainMenubar->addMenu("Edit");
-    mainMenubar->addMenu("Build");
-    mainMenubar->addMenu("Project");
-    mainMenubar->addMenu("Compilers");
-    mainMenubar->addMenu("Help");
+    mainMenubar->addMenu("&View");
+    mainMenubar->addMenu("&Edit");
+    mainMenubar->addMenu("&Build");
+    mainMenubar->addMenu("&Project");
+    mainMenubar->addMenu("&Compilers");
+    QMenu* helpMenu = new QMenu("&Help");
+    helpMenu->addAction(aboutAction);
+    mainMenubar->addMenu(helpMenu);
     this->setMenuBar(mainMenubar);
 
     treeWidget = new QTreeWidget();
@@ -77,12 +87,16 @@ MainWindow::MainWindow(QWidget *parent) :
     treeDock = new QDockWidget("Project");
     treeDock->setWidget(treeWidget);
     this->addDockWidget(Qt::RightDockWidgetArea, treeDock);
+    ToolBoxWidget* toolWidget = new ToolBoxWidget();
+    QDockWidget* toolDock = new QDockWidget("Toolbox");
+    toolDock->setWidget(toolWidget);
+    this->addDockWidget(Qt::LeftDockWidgetArea, toolDock);
     propDock = new QDockWidget("Properties");
-    this->addDockWidget(Qt::RightDockWidgetArea, propDock);
+    this->addDockWidget(Qt::LeftDockWidgetArea, propDock);
     evtDock = new QDockWidget("Events");
     this->addDockWidget(Qt::RightDockWidgetArea, evtDock);
-    tabifyDockWidget(treeDock, propDock);
-    tabifyDockWidget(propDock, evtDock);
+    tabifyDockWidget(treeDock, evtDock);
+    //tabifyDockWidget(propDock, evtDock);
     treeDock->raise();
     // this will make the tabs ontop of the right dock widget area instead of on bottom
     // they look better on bottom
@@ -91,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
     outputDock = new QDockWidget("Output");
     outputWidget = new QTextEdit();
     outputWidget->setText("This will be ouput displayed by a compiler...");
+    outputWidget->setReadOnly(true);
     outputDock->setWidget(outputWidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, outputDock);
     messagesDock = new QDockWidget("Messages");
@@ -111,14 +126,17 @@ MainWindow::MainWindow(QWidget *parent) :
     mainMdiArea = new QMdiArea();
     mainMdiArea->setTabsClosable(true);
     mainMdiArea->setTabsMovable(true);
-    QWidget* welcomeTab = new QWidget();
-    welcomeTab->setWindowTitle("Welcome");
+   // mainMdiArea->setStyleSheet("QWidget{ background-color: white; }");
+    //self.brush = QtGui.QBrush(QtGui.QPixmap("view.jpg"))
 
+    WelcomeWidget* welcomeTab = new WelcomeWidget();
     mainMdiArea->addSubWindow(welcomeTab, Qt::WindowTitleHint);
+    //mainMdiArea->setStyleSheet("QTabBar::tab { height: 24px; width: 100px; }");
     CreateScriptTab();
     // MDIArea's can bet set to tabs, interesting...
     mainMdiArea->setDocumentMode(true);
     mainMdiArea->setViewMode(QMdiArea::TabbedView);
+
     this->setCentralWidget(mainMdiArea);
 
     addResourceGroup("Forms");
@@ -148,30 +166,14 @@ void MainWindow::closeApplication() {
     this->close();
 }
 
+void MainWindow::showAboutDialog() {
+    AboutDialog* aboutDialog = new AboutDialog();
+    aboutDialog->show();
+}
+
 void MainWindow::CreateScriptTab() {
-    QsciScintilla* sciEditor = new QsciScintilla(this);
-    sciEditor->setWindowTitle("example.cpp");
-    sciEditor->setFrameStyle(QsciScintilla::NoFrame);
-    //sciEditor->setWrapMode(QsciScintilla::WrapCharacter);
-
-    sciEditor->setCaretLineVisible(true);
-    sciEditor->setCaretLineBackgroundColor(QColor("#ffe4e4"));
-
-    QFont font = QFont("Courier 10 Pitch", 10);
-    font.setFixedPitch(true);
-    sciEditor->setFont(font);
-    QsciLexerCPP lexer;
-    lexer.setFont(font);
-    sciEditor->setLexer(&lexer);
-    sciEditor->setMarginsFont(font);
-    QFontMetrics fontmetrics = QFontMetrics(font);
-    sciEditor->setMarginWidth(0, fontmetrics.width("__")+8);
-    sciEditor->setMarginWidth(1, 0);
-    sciEditor->setMarginLineNumbers(0, true);
-    sciEditor->setMarginsForegroundColor(QColor("#bbbbbb"));
-    //sciEditor->setMarginsBackgroundColor(QColor("#cccccc"));
-
-    mainMdiArea->addSubWindow(sciEditor, Qt::WindowTitleHint);
+    CodeWidget* codeWidget = new CodeWidget();
+    mainMdiArea->addSubWindow(codeWidget, Qt::WindowTitleHint);
 }
 
 void MainWindow::outputClear(bool clearLog, bool clearMessages)

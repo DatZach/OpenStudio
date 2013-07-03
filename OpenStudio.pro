@@ -17,13 +17,23 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     customwidgets/qttoolbar.cpp \
-    dialogs/templatedialog.cpp
+    dialogs/templatedialog.cpp \
+    widgets/toolboxwidget.cpp \
+    widgets/codewidget.cpp \
+    widgets/welcomewidget.cpp \
+    dialogs/aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     customwidgets/qttoolbar.h \
-    dialogs/templatedialog.h
+    dialogs/templatedialog.h \
+    widgets/toolboxwidget.h \
+    widgets/codewidget.h \
+    widgets/welcomewidget.h \
+    dialogs/aboutdialog.h
 
-FORMS    +=
+FORMS    += \
+    widgets/welcomewidget.ui \
+    dialogs/aboutdialog.ui
 
 RESOURCES += \
     iconsres.qrc

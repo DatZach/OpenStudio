@@ -1,6 +1,6 @@
 /**
-* @file  main.cpp
-* @brief Source implementing the main entry point of the application.
+* @file  codewidget.h
+* @brief Header implementing a class for a code widget.
 *
 * @section License
 *
@@ -22,16 +22,32 @@
 **/
 
 
-#include "mainwindow.h"
-#include <QApplication>
+#ifndef CODEWIDGET_H
+#define CODEWIDGET_H
 
-int main(int argc, char *argv[])
-{
-    QApplication a(argc, argv);
-    // this style sheet removes those ugly borders on status bar items
-    a.setStyleSheet("QTabBar::tab { background-color: white; color: black; height: 24px; } QTabBar::tab:selected { background-color: #1B91E0; color: white; }");
-    MainWindow w;
-    w.show();
-    
-    return a.exec();
+#include <QWidget>
+#include <QVBoxLayout>
+#include <Qsci/qsciscintilla.h>
+#include <Qsci/qscilexercpp.h>
+
+namespace Ui {
+class CodeWidget;
 }
+
+class CodeWidget : public QWidget
+{
+    Q_OBJECT
+    
+public:
+    explicit CodeWidget(QWidget *parent = 0);
+    ~CodeWidget();
+    
+private:
+    int BREAK_MARKER_NUM;
+    QsciScintilla* sciEditor;
+
+public slots:
+    void on_margin_clicked(int nmargin, int nline, Qt::KeyboardModifiers modifiers);
+};
+
+#endif // CODEWIDGET_H
