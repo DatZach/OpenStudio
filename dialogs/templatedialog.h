@@ -41,12 +41,10 @@ class TemplateDialog : public QDialog
 public:
     explicit TemplateDialog(QWidget *parent = 0);
     ~TemplateDialog();
-    
-
-    QTreeWidget* typeTree;
-    QTreeWidget* templateTree;
 
 private:
+    QTreeWidget* typeTree;
+    QTreeWidget* templateTree;
 
 };
 

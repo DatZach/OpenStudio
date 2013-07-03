@@ -8,6 +8,13 @@
         <file>icons/page_white_h.png</file>
         <file>icons/page_white_visualstudio.png</file>
         <file>icons/page_white_add.png</file>
+        <file>icons/error.png</file>
+        <file>icons/warning.png</file>
+        <file>icons/notice.png</file>
         <file>icons/folder.png</file>
+        <file>icons/folder_open.png</file>
+        <file>icons/save.png</file>
+        <file>icons/save-all.png</file>
+        <file>icons/save-as.png</file>
     </qresource>
 </RCC>

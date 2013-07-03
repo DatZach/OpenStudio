@@ -41,6 +41,12 @@
 #include "customwidgets/qttoolbar.h"
 #include "dialogs/templatedialog.h"
 
+enum {
+    MSG_ERROR,
+    MSG_WARNING,
+    MSG_NOTICE
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -48,12 +54,24 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    void CreateScriptTab();
+    void outputClear(bool clearLog = true, bool clearMessages = true);
+    void outputText(QString text);
+    void outputLine(QString text);
+    void outputMessage(int type, QString origin, QString location, QString description);
+    void addResourceGroup(QString name);
+    void addResource(QString name, QIcon icon);
+
+private:
     QMenuBar* mainMenubar;
     QtToolBar* mainToolbar;
     QStatusBar* mainStatusbar;
 
     QMdiArea* mainMdiArea;
 
+    QDockWidget* propDock;
+    QDockWidget* evtDock;
     QDockWidget* treeDock;
     QTreeWidget* treeWidget;
 
@@ -61,8 +79,6 @@ public:
     QDockWidget* outputDock;
     QTableWidget* messagesWidget;
     QDockWidget* messagesDock;
-
-    void CreateScriptTab();
 
 public slots:
     void newProject();

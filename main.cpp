@@ -28,6 +28,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    // this style sheet removes those ugly borders on status bar items
+    a.setStyleSheet("QStatusBar::item { border: 0px solid black }; ");
     MainWindow w;
     w.show();
     

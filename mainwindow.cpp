@@ -21,6 +21,7 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 **/
 
+#include <QHeaderView>
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -38,20 +39,28 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* newAction = new QAction(QIcon(":icons/icons/page_white_add.png"), "New file or project", this);
     connect(newAction, SIGNAL(triggered()), this, SLOT(newProject()));
     QAction* openAction = new QAction(QIcon(":icons/icons/folder.png"), "Open existing file or project", this);
+    QAction* saveAction = new QAction(QIcon(":icons/icons/save.png"), "Save the current file", this);
+    QAction* saveasAction = new QAction(QIcon(":icons/icons/save-as.png"), "Open existing file or project", this);
+    QAction* saveallAction = new QAction(QIcon(":icons/icons/save-all.png"), "Save all open files", this);
     QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "Exit", this);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApplication()));
 
     mainToolbar = new QtToolBar();
     mainToolbar->addAction(newAction);
     mainToolbar->addAction(openAction);
+    mainToolbar->addAction(saveAction);
+    mainToolbar->addAction(saveallAction);
     mainToolbar->setActionWidgetSize(24, 24);
     this->addToolBar(mainToolbar);
     mainStatusbar = new QStatusBar();
+    mainStatusbar->addWidget(new QLabel("Ready"));
     this->setStatusBar(mainStatusbar);
     mainMenubar = new QMenuBar();
     QMenu* fileMenu = new QMenu("File");
     fileMenu->addAction(newAction);
     fileMenu->addAction(openAction);
+    fileMenu->addAction(saveAction);
+    fileMenu->addAction(saveallAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
     mainMenubar->addMenu(fileMenu);
@@ -64,9 +73,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     treeWidget = new QTreeWidget();
     treeWidget->setHeaderHidden(true);
-    treeDock = new QDockWidget("Hierarchy");
+    treeDock = new QDockWidget("Project");
     treeDock->setWidget(treeWidget);
     this->addDockWidget(Qt::RightDockWidgetArea, treeDock);
+    propDock = new QDockWidget("Properties");
+    this->addDockWidget(Qt::RightDockWidgetArea, propDock);
+    evtDock = new QDockWidget("Events");
+    this->addDockWidget(Qt::RightDockWidgetArea, evtDock);
+    tabifyDockWidget(treeDock, propDock);
+    tabifyDockWidget(propDock, evtDock);
+    treeDock->raise();
+    // this will make the tabs ontop of the right dock widget area instead of on bottom
+    // they look better on bottom
+    //this->setTabPosition(Qt::RightDockWidgetArea, QTabWidget::North);
 
     outputDock = new QDockWidget("Output");
     outputWidget = new QTextEdit();
@@ -75,6 +94,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->addDockWidget(Qt::BottomDockWidgetArea, outputDock);
     messagesDock = new QDockWidget("Messages");
     messagesWidget = new QTableWidget();
+    messagesWidget->setColumnCount(4);
+    messagesWidget->verticalHeader()->setVisible(false);
     messagesDock->setWidget(messagesWidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, messagesDock);
 
@@ -88,6 +109,17 @@ MainWindow::MainWindow(QWidget *parent) :
     mainMdiArea->setDocumentMode(true);
     mainMdiArea->setViewMode(QMdiArea::TabbedView);
     this->setCentralWidget(mainMdiArea);
+
+    addResourceGroup("Forms");
+    addResourceGroup("Dialogs");
+    addResource("main.cpp", QIcon(":/icons/icons/page_white_cplusplus"));
+    addResource("EmptyApplication.vcproj", QIcon(":/icons/icons/page_white_visualstudio.png"));
+
+    outputLine("test");
+    outputLine("test2");
+    outputMessage(MSG_ERROR, "example.cpp", "Line 552", "Lorem ipsum dollar sit amit...");
+    outputMessage(MSG_WARNING, "example.cpp", "Line 553", "Lorem ipsum dollar sit amit...");
+    outputMessage(MSG_NOTICE, "example.cpp", "Line 554", "Lorem ipsum dollar sit amit...");
 }
 
 MainWindow::~MainWindow()
@@ -129,4 +161,69 @@ void MainWindow::CreateScriptTab() {
     //sciEditor->setMarginsBackgroundColor(QColor("#cccccc"));
 
     mainMdiArea->addSubWindow(sciEditor, Qt::WindowTitleHint);
+}
+
+void MainWindow::outputClear(bool clearLog, bool clearMessages)
+{
+    if (clearLog) {
+        this->outputWidget->clear();
+    }
+    if (clearMessages) {
+        this->messagesWidget->clearContents();
+        this->messagesWidget->setRowCount(0);
+    }
+}
+
+void MainWindow::outputText(QString text)
+{
+    this->outputWidget->insertPlainText(text);
+}
+
+void MainWindow::outputLine(QString text)
+{
+    this->outputWidget->append(text);
+}
+
+void MainWindow::outputMessage(int type, QString origin, QString location, QString description)
+{
+    int ind = messagesWidget->rowCount();
+    messagesWidget->insertRow(ind);
+    QTableWidgetItem* typeItem = new QTableWidgetItem();
+    switch (type) {
+    case MSG_ERROR:
+        typeItem->setText("Error");
+        typeItem->setIcon(QIcon(":/icons/icons/error.png"));
+        break;
+    case MSG_WARNING:
+        typeItem->setText("Warning");
+        typeItem->setIcon(QIcon(":/icons/icons/warning.png"));
+        break;
+    case MSG_NOTICE:
+        typeItem->setText("Notice");
+        typeItem->setIcon(QIcon(":/icons/icons/notice.png"));
+        break;
+    }
+
+    messagesWidget->setItem(ind, 0, typeItem);
+    messagesWidget->setItem(ind, 1, new QTableWidgetItem(origin));
+    messagesWidget->setItem(ind, 2, new QTableWidgetItem(location));
+    messagesWidget->setItem(ind, 3, new QTableWidgetItem(description));
+}
+
+void MainWindow::addResourceGroup(QString name)
+{
+    QTreeWidgetItem* treeItem = new QTreeWidgetItem();
+    treeItem = new QTreeWidgetItem();
+    treeItem->setText(0, name);
+    treeItem->setIcon(0, QIcon(":/icons/icons/folder.png"));
+    treeWidget->addTopLevelItem(treeItem);
+}
+
+void MainWindow::addResource(QString name, QIcon icon)
+{
+    QTreeWidgetItem* treeItem = new QTreeWidgetItem();
+    treeItem = new QTreeWidgetItem();
+    treeItem->setText(0, name);
+    treeItem->setIcon(0, icon);
+    treeWidget->addTopLevelItem(treeItem);
 }
