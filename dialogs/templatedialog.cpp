@@ -28,6 +28,7 @@ TemplateDialog::TemplateDialog(QWidget *parent) :
     QDialog(parent)
 {
     this->setWindowTitle("Template Selection Dialog");
+    this->resize(600, 400);
     QVBoxLayout* verticalLayout = new QVBoxLayout();
 
     typeTree = new QTreeWidget();

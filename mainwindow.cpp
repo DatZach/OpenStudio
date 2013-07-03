@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     this->setWindowTitle("Open Studio");
+    this->resize(1000, 600);
 
     // this helps with the layout to keep the output window
     // from stretching the entire bottom of the main window
@@ -95,11 +96,21 @@ MainWindow::MainWindow(QWidget *parent) :
     messagesDock = new QDockWidget("Messages");
     messagesWidget = new QTableWidget();
     messagesWidget->setColumnCount(4);
+    QStringList headers;
+    headers.append("Type");
+    headers.append("File");
+    headers.append("Location");
+    headers.append("Description");
+    messagesWidget->setHorizontalHeaderLabels(headers);
     messagesWidget->verticalHeader()->setVisible(false);
     messagesDock->setWidget(messagesWidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, messagesDock);
+    tabifyDockWidget(outputDock, messagesDock);
+    outputDock->raise();
 
     mainMdiArea = new QMdiArea();
+    mainMdiArea->setTabsClosable(true);
+    mainMdiArea->setTabsMovable(true);
     QWidget* welcomeTab = new QWidget();
     welcomeTab->setWindowTitle("Welcome");
 
