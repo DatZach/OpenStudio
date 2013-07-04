@@ -1,6 +1,6 @@
 /**
-* @file  welcomewidget.cpp
-* @brief Source implementing a class for a welcome widget.
+* @file  helpviewer.h
+* @brief Header implementing a class for a help viewer.
 *
 * @section License
 *
@@ -21,19 +21,25 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "welcomewidget.h"
-#include "ui_welcomewidget.h"
+#ifndef HELPVIEWER_H
+#define HELPVIEWER_H
 
-WelcomeWidget::WelcomeWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::WelcomeWidget)
-{
-    ui->setupUi(this);
-    this->setWindowTitle("Welcome");
-    ui->webView->setUrl(QUrl("http://msdn.microsoft.com"));
+#include <QDialog>
+
+namespace Ui {
+class HelpViewer;
 }
 
-WelcomeWidget::~WelcomeWidget()
+class HelpViewer : public QDialog
 {
-    delete ui;
-}
+    Q_OBJECT
+    
+public:
+    explicit HelpViewer(QWidget *parent = 0);
+    ~HelpViewer();
+    
+private:
+    Ui::HelpViewer *ui;
+};
+
+#endif // HELPVIEWER_H

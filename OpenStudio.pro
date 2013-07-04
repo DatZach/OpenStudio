@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += webkitwidgets network core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     widgets/toolboxwidget.cpp \
     widgets/codewidget.cpp \
     widgets/welcomewidget.cpp \
-    dialogs/aboutdialog.cpp
+    dialogs/aboutdialog.cpp \
+    dialogs/helpviewer.cpp \
+    dialogs/findandreplace.cpp
 
 HEADERS  += mainwindow.h \
     customwidgets/qttoolbar.h \
@@ -29,11 +31,14 @@ HEADERS  += mainwindow.h \
     widgets/toolboxwidget.h \
     widgets/codewidget.h \
     widgets/welcomewidget.h \
-    dialogs/aboutdialog.h
+    dialogs/aboutdialog.h \
+    dialogs/helpviewer.h \
+    dialogs/findandreplace.h
 
 FORMS    += \
     widgets/welcomewidget.ui \
-    dialogs/aboutdialog.ui
+    dialogs/helpviewer.ui \
+    dialogs/findandreplace.ui
 
 RESOURCES += \
     iconsres.qrc

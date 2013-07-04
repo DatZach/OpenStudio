@@ -27,7 +27,6 @@
 ToolBoxWidget::ToolBoxWidget(QWidget *parent) :
     QWidget(parent)
 {
-
     QVBoxLayout* layout = new QVBoxLayout();
     QLineEdit* searchEdit = new QLineEdit();
     searchEdit->setText("Filter...");

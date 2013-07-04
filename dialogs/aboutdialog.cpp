@@ -22,16 +22,36 @@
 **/
 
 #include "aboutdialog.h"
-#include "ui_aboutdialog.h"
+#include <QFile>
+#include <QTextStream>
 
 AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AboutDialog)
+    QDialog(parent)
 {
-    ui->setupUi(this);
+    this->setWindowTitle("About");
+    this->resize(500, 300);
+
+    QVBoxLayout* layout = new QVBoxLayout();
+    browser = new QTextEdit();
+    browser->setReadOnly(true);
+
+    layout->setContentsMargins(3, 3, 3, 3);
+    layout->addWidget(browser);
+    this->setLayout(layout);
 }
 
 AboutDialog::~AboutDialog()
 {
-    delete ui;
+
+}
+
+void AboutDialog::show(char* path, char* title) {
+    QFile file(path);
+
+    file.open(QFile::ReadOnly | QFile::Text);
+
+    QTextStream ReadFile(&file);
+    browser->setHtml(ReadFile.readAll());
+    this->setVisible(true);
+    this->setWindowTitle(title);
 }

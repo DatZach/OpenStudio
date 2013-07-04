@@ -26,15 +26,18 @@
 #define CODEWIDGET_H
 
 #include <QWidget>
+#include <QMenu>
 #include <QVBoxLayout>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexercpp.h>
+
+#include <QContextMenuEvent>
 
 namespace Ui {
 class CodeWidget;
 }
 
-class CodeWidget : public QWidget
+class CodeWidget : public QsciScintilla
 {
     Q_OBJECT
     
@@ -42,9 +45,13 @@ public:
     explicit CodeWidget(QWidget *parent = 0);
     ~CodeWidget();
     
+protected:
+    void contextMenuEvent(QContextMenuEvent * e);
+
 private:
     int BREAK_MARKER_NUM;
-    QsciScintilla* sciEditor;
+
+    QMenu* editMenu;
 
 public slots:
     void on_margin_clicked(int nmargin, int nline, Qt::KeyboardModifiers modifiers);

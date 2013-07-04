@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     // this style sheet removes those ugly borders on status bar items
-    a.setStyleSheet("QTabBar::tab { background-color: white; color: black; height: 24px; } QTabBar::tab:selected { background-color: #1B91E0; color: white; }");
+    a.setStyleSheet(" QTabBar::tab { height: 24px; }");
     MainWindow w;
     w.show();
     

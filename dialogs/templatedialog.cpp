@@ -63,7 +63,7 @@ TemplateDialog::TemplateDialog(QWidget *parent) :
 
     QStringList sourceDesc;
     sourceDesc.append("Source");
-    sourceDesc.append("Visual C++ source code file");
+    sourceDesc.append("Visual C++ source code file.");
     QTreeWidgetItem* sourceItem = new QTreeWidgetItem(sourceDesc, 0);
     sourceItem->setIcon(0, QIcon(":/icons/icons/page_white_cplusplus.png"));
 

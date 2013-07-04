@@ -41,7 +41,9 @@
 #include "widgets/codewidget.h"
 #include "widgets/welcomewidget.h"
 #include "dialogs/templatedialog.h"
+#include "dialogs/helpviewer.h"
 #include "dialogs/aboutdialog.h"
+#include "dialogs/findandreplace.h"
 
 enum {
     MSG_ERROR,
@@ -66,9 +68,13 @@ public:
     void addResource(QString name, QIcon icon);
 
 private:
+    AboutDialog* aboutDialog;
+
     QMenuBar* mainMenubar;
-    QtToolBar* mainToolbar;
     QStatusBar* mainStatusbar;
+
+    QtToolBar* fileToolbar;
+    QtToolBar* editToolbar;
 
     QMdiArea* mainMdiArea;
 
@@ -84,10 +90,23 @@ private:
     QTableWidget* messagesWidget;
     QDockWidget* messagesDock;
 
+    HelpViewer* helpViewer;
+    FindAndReplace* fnrDialog;
+
 public slots:
     void newProject();
     void closeApplication();
+    void showFindAndReplace();
+    void showHelpViewer();
+    void showLicenseDialog();
     void showAboutDialog();
+    void toggleMdiTabs();
+    void undo();
+    void redo();
+    void cut();
+    void copy();
+    void paste();
+    void selectAll();
 };
 
 #endif // MAINWINDOW_H

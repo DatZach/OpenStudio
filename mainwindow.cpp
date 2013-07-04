@@ -46,21 +46,52 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "&Exit", this);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApplication()));
 
+    QAction* cutAction = new QAction(QIcon(":icons/icons/cut.png"), "&Cut", this);
+    connect(cutAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* copyAction = new QAction(QIcon(":icons/icons/page_white_copy.png"), "&Copy", this);
+    connect(copyAction, SIGNAL(triggered()), this, SLOT(copy()));
+    QAction* pasteAction = new QAction(QIcon(":icons/icons/paste_plain.png"), "&Paste", this);
+    connect(pasteAction, SIGNAL(triggered()), this, SLOT(paste()));
+    QAction* undoAction = new QAction(QIcon(":icons/icons/undo.png"), "&Undo", this);
+    connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
+    QAction* redoAction = new QAction(QIcon(":icons/icons/redo.png"), "&Redo", this);
+    connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
+    QAction* selectallAction = new QAction("Select &All", this);
+    connect(selectallAction, SIGNAL(triggered()), this, SLOT(selectAll()));
+    QAction* fnrAction = new QAction(QIcon(":icons/icons/find.png"), "&Find and Replace", this);
+    connect(fnrAction, SIGNAL(triggered()), this, SLOT(showFindAndReplace()));
+
+    QAction* mdiAction = new QAction("&Multiple Document Interface", this);
+    connect(mdiAction, SIGNAL(triggered()), this, SLOT(toggleMdiTabs()));
+
+    QAction* manualAction = new QAction(QIcon(":icons/icons/manual.png"), "&Documentation", this);
+    connect(manualAction, SIGNAL(triggered()), this, SLOT(showHelpViewer()));
+    QAction* licenseAction = new QAction("&License", this);
+    connect(licenseAction, SIGNAL(triggered()), this, SLOT(showLicenseDialog()));
     QAction* aboutAction = new QAction(QIcon(":icons/icons/help.png"), "&About", this);
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 
-    mainToolbar = new QtToolBar();
-    mainToolbar->addAction(newAction);
-    mainToolbar->addAction(openAction);
-    mainToolbar->addAction(saveAction);
-    mainToolbar->addAction(saveallAction);
-    mainToolbar->setActionWidgetSize(24, 24);
-    this->addToolBar(mainToolbar);
+    fileToolbar = new QtToolBar();
+    fileToolbar->addAction(newAction);
+    fileToolbar->addAction(openAction);
+    fileToolbar->addAction(saveAction);
+    fileToolbar->addAction(saveallAction);
+    fileToolbar->setActionWidgetSize(26, 26);
+    this->addToolBar(fileToolbar);
+    editToolbar = new QtToolBar();
+    editToolbar->addAction(undoAction);
+    editToolbar->addAction(redoAction);
+    editToolbar->addAction(cutAction);
+    editToolbar->addAction(copyAction);
+    editToolbar->addAction(pasteAction);
+    editToolbar->addAction(fnrAction);
+    editToolbar->setActionWidgetSize(26, 26);
+    this->addToolBar(editToolbar);
     mainStatusbar = new QStatusBar();
     QLabel* statusLabel = new QLabel("Ready");
     mainStatusbar->setStyleSheet("QStatusBar { background-color: #1B91E0; }  QStatusBar::item { border: 0px solid red; border-radius: 3px; }");
     statusLabel->setStyleSheet("QLabel { background-color: #1B91E0; color: white; }");
-    this->setStyleSheet("QMainWindow { background-color: white; }");
+    //this->setStyleSheet("QMainWindow { background-color: white; }");
     mainStatusbar->addWidget(statusLabel);
     this->setStatusBar(mainStatusbar);
     mainMenubar = new QMenuBar();
@@ -72,12 +103,25 @@ MainWindow::MainWindow(QWidget *parent) :
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
     mainMenubar->addMenu(fileMenu);
-    mainMenubar->addMenu("&View");
-    mainMenubar->addMenu("&Edit");
+    QMenu* viewMenu = new QMenu("&View");
+    viewMenu->addAction(mdiAction);
+    mainMenubar->addMenu(viewMenu);
+    QMenu* editMenu = new QMenu("&Edit");
+    editMenu->addAction(undoAction);
+    editMenu->addAction(redoAction);
+    editMenu->addSeparator();
+    editMenu->addAction(cutAction);
+    editMenu->addAction(copyAction);
+    editMenu->addAction(pasteAction);
+    editMenu->addSeparator();
+    editMenu->addAction(selectallAction);
+    mainMenubar->addMenu(editMenu);
     mainMenubar->addMenu("&Build");
     mainMenubar->addMenu("&Project");
     mainMenubar->addMenu("&Compilers");
     QMenu* helpMenu = new QMenu("&Help");
+    helpMenu->addAction(manualAction);
+    helpMenu->addAction(licenseAction);
     helpMenu->addAction(aboutAction);
     mainMenubar->addMenu(helpMenu);
     this->setMenuBar(mainMenubar);
@@ -88,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     treeDock->setWidget(treeWidget);
     this->addDockWidget(Qt::RightDockWidgetArea, treeDock);
     ToolBoxWidget* toolWidget = new ToolBoxWidget();
-    QDockWidget* toolDock = new QDockWidget("Toolbox");
+    toolDock = new QDockWidget("Toolbox");
     toolDock->setWidget(toolWidget);
     this->addDockWidget(Qt::LeftDockWidgetArea, toolDock);
     propDock = new QDockWidget("Properties");
@@ -132,7 +176,6 @@ MainWindow::MainWindow(QWidget *parent) :
     WelcomeWidget* welcomeTab = new WelcomeWidget();
     mainMdiArea->addSubWindow(welcomeTab, Qt::WindowTitleHint);
     //mainMdiArea->setStyleSheet("QTabBar::tab { height: 24px; width: 100px; }");
-    CreateScriptTab();
     // MDIArea's can bet set to tabs, interesting...
     mainMdiArea->setDocumentMode(true);
     mainMdiArea->setViewMode(QMdiArea::TabbedView);
@@ -146,9 +189,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     outputLine("test");
     outputLine("test2");
-    outputMessage(MSG_ERROR, "example.cpp", "Line 552", "Lorem ipsum dollar sit amit...");
-    outputMessage(MSG_WARNING, "example.cpp", "Line 553", "Lorem ipsum dollar sit amit...");
-    outputMessage(MSG_NOTICE, "example.cpp", "Line 554", "Lorem ipsum dollar sit amit...");
+    outputMessage(MSG_ERROR, "example.cpp", "Line 552", "Lorem ipsum dolor sit amet...");
+    outputMessage(MSG_WARNING, "example.cpp", "Line 553", "Lorem ipsum dolor sit amet...");
+    outputMessage(MSG_NOTICE, "example.cpp", "Line 554", "Lorem ipsum dolor sit amet...");
+
+    aboutDialog = NULL;
+    helpViewer = NULL;
+    fnrDialog = NULL;
+
+    CreateScriptTab();
+
+    treeDock->setVisible(false);
+    evtDock->setVisible(false);
+    toolDock->setVisible(false);
+    outputDock->setVisible(false);
+    messagesDock->setVisible(false);
+    propDock->setVisible(false);
+
 }
 
 MainWindow::~MainWindow()
@@ -160,15 +217,83 @@ MainWindow::~MainWindow()
 void MainWindow::newProject() {
     TemplateDialog* newSelector = new TemplateDialog();
     newSelector->show();
+
+    treeDock->setVisible(true);
+    evtDock->setVisible(true);
+    toolDock->setVisible(true);
+    outputDock->setVisible(true);
+    messagesDock->setVisible(true);
+    propDock->setVisible(true);
+   // CreateScriptTab();
 }
 
 void MainWindow::closeApplication() {
     this->close();
 }
 
+void MainWindow::showFindAndReplace() {
+    if (fnrDialog == NULL) {
+        fnrDialog = new FindAndReplace();
+    }
+    fnrDialog->show();
+}
+
+void MainWindow::showHelpViewer() {
+    if (helpViewer == NULL) {
+        helpViewer = new HelpViewer();
+    }
+    helpViewer->show();
+}
+
+void MainWindow::showLicenseDialog() {
+    if (aboutDialog == NULL) {
+        aboutDialog = new AboutDialog();
+    }
+    aboutDialog->show(":/license.html", "License");
+}
+
 void MainWindow::showAboutDialog() {
-    AboutDialog* aboutDialog = new AboutDialog();
-    aboutDialog->show();
+    if (aboutDialog == NULL) {
+        aboutDialog = new AboutDialog();
+    }
+    aboutDialog->show(":/about.html", "About");
+}
+
+void MainWindow::toggleMdiTabs() {
+
+    mainMdiArea->setDocumentMode(true);
+    switch (mainMdiArea->viewMode()) {
+    case QMdiArea::TabbedView:
+         mainMdiArea->setViewMode(QMdiArea::SubWindowView);
+        break;
+    case QMdiArea::SubWindowView:
+         mainMdiArea->setViewMode(QMdiArea::TabbedView);
+        break;
+    }
+}
+
+void MainWindow::undo() {
+
+}
+
+void MainWindow::redo() {
+
+}
+
+void MainWindow::cut() {
+
+}
+
+void MainWindow::copy() {
+
+}
+
+void MainWindow::paste() {
+
+}
+
+void MainWindow::selectAll() {
+
 }
 
 void MainWindow::CreateScriptTab() {

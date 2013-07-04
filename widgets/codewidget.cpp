@@ -24,50 +24,73 @@
 #include "codewidget.h"
 
 CodeWidget::CodeWidget(QWidget *parent) :
-    QWidget(parent)
+    QsciScintilla(parent)
 {
     this->setWindowTitle("example.cpp");
 
-    sciEditor = new QsciScintilla(this);
+    //sciEditor = new QsciScintilla(this);
     BREAK_MARKER_NUM = 8;
-    //sciEditor->setFrameStyle(QsciScintilla::NoFrame);
-    //sciEditor->setWrapMode(QsciScintilla::WrapCharacter);
+    //this->setFrameStyle(QsciScintilla::NoFrame);
+    //this->setWrapMode(QsciScintilla::WrapCharacter);
 
-    sciEditor->setCaretLineVisible(true);
-    sciEditor->setCaretLineBackgroundColor(QColor("#ffe4e4"));
+    this->setCaretLineVisible(true);
+    this->setCaretLineBackgroundColor(QColor("#ffe4e4"));
 
     QFont font = QFont("Courier 10 Pitch", 10);
     font.setFixedPitch(true);
-    sciEditor->setFont(font);
+    this->setFont(font);
     QsciLexerCPP lexer;
     lexer.setFont(font);
-    sciEditor->setLexer(&lexer);
+    this->setLexer(&lexer);
 
     QFontMetrics fontmetrics = QFontMetrics(font);
-    sciEditor->setMarginWidth(0, fontmetrics.width("__")+8);
-   // sciEditor->setMarginWidth(1, 0);
-    sciEditor->setMarginLineNumbers(0, true);
-    sciEditor->setMarginsBackgroundColor(QColor("#dddddd"));
+    this->setMarginWidth(0, fontmetrics.width("__")+8);
+   // this->setMarginWidth(1, 0);
+    this->setMarginLineNumbers(0, true);
+    this->setMarginsBackgroundColor(QColor("#dddddd"));
 
-    sciEditor->setMarginSensitivity(1, true);
-    //sciEditor->setMarginWidth();
-    connect(sciEditor,
+    this->setMarginSensitivity(1, true);
+    //this->setMarginWidth();
+    connect(this,
         SIGNAL(marginClicked(int, int, Qt::KeyboardModifiers)), this,
                        SLOT(on_margin_clicked(int, int, Qt::KeyboardModifiers)));
-    sciEditor->markerDefine(QImage(":/icons/icons/link_break.png"),
+    this->markerDefine(QImage(":/icons/icons/link_break.png"),
         BREAK_MARKER_NUM);
-    sciEditor->setBraceMatching(QsciScintilla::SloppyBraceMatch);
+    this->setBraceMatching(QsciScintilla::SloppyBraceMatch);
 
-    sciEditor->setFolding(QsciScintilla::BoxedTreeFoldStyle, 3);
-    //sciEditor->setFoldMarginColors(QColor("#dddddd"), QColor("#dddddd"));
+    this->setFolding(QsciScintilla::BoxedTreeFoldStyle, 3);
+    //this->setFoldMarginColors(QColor("#dddddd"), QColor("#dddddd"));
 
-    sciEditor->setMarginsFont(font);
-    sciEditor->setMarginsForegroundColor(QColor("#bbbbbb"));
+    this->setMarginsFont(font);
+    this->setMarginsForegroundColor(QColor("#bbbbbb"));
 
-    QVBoxLayout* layout = new QVBoxLayout();
-    layout->addWidget(sciEditor);
-    layout->setContentsMargins(3, 3, 3, 3);
-    this->setLayout(layout);
+   //QVBoxLayout* layout = new QVBoxLayout();
+    //layout->addWidget(sciEditor);
+   //layout->setContentsMargins(3, 3, 3, 3);
+    //this->setLayout(layout);
+
+    QAction* cutAction = new QAction(QIcon(":icons/icons/cut.png"), "&Cut", this);
+    connect(cutAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* copyAction = new QAction(QIcon(":icons/icons/page_white_copy.png"), "&Copy", this);
+    connect(copyAction, SIGNAL(triggered()), this, SLOT(copy()));
+    QAction* pasteAction = new QAction(QIcon(":icons/icons/paste_plain.png"), "&Paste", this);
+    connect(pasteAction, SIGNAL(triggered()), this, SLOT(paste()));
+    QAction* undoAction = new QAction(QIcon(":icons/icons/undo.png"), "&Undo", this);
+    connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
+    QAction* redoAction = new QAction(QIcon(":icons/icons/redo.png"), "&Redo", this);
+    connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
+    QAction* selectallAction = new QAction("Select &All", this);
+    connect(selectallAction, SIGNAL(triggered()), this, SLOT(selectAll()));
+
+    editMenu = new QMenu("&Edit");
+    editMenu->addAction(undoAction);
+    editMenu->addAction(redoAction);
+    editMenu->addSeparator();
+    editMenu->addAction(cutAction);
+    editMenu->addAction(copyAction);
+    editMenu->addAction(pasteAction);
+    editMenu->addSeparator();
+    editMenu->addAction(selectallAction);
 }
 
 CodeWidget::~CodeWidget()
@@ -75,11 +98,16 @@ CodeWidget::~CodeWidget()
 
 }
 
+void CodeWidget::contextMenuEvent(QContextMenuEvent* e) {
+    editMenu->move(this->mapFromParent(QCursor::pos()));
+   editMenu->show();
+}
+
 void CodeWidget::on_margin_clicked(int nmargin, int nline, Qt::KeyboardModifiers modifiers) {
     // Toggle marker for the line the margin was clicked on
-    if (sciEditor->markersAtLine(nline) != 0) {
-        sciEditor->markerDelete(nline, BREAK_MARKER_NUM);
+    if (this->markersAtLine(nline) != 0) {
+        this->markerDelete(nline, BREAK_MARKER_NUM);
     } else {
-        sciEditor->markerAdd(nline, BREAK_MARKER_NUM);
+        this->markerAdd(nline, BREAK_MARKER_NUM);
     }
 }

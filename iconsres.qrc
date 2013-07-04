@@ -18,5 +18,18 @@
         <file>icons/save-as.png</file>
         <file>icons/link_break.png</file>
         <file>icons/help.png</file>
+        <file>icons/cut.png</file>
+        <file>icons/page_white_copy.png</file>
+        <file>icons/paste_plain.png</file>
+        <file>icons/undo.png</file>
+        <file>icons/redo.png</file>
+        <file>icons/manual.png</file>
+        <file>icons/find.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>logo.png</file>
+        <file>about.html</file>
+        <file>gpl_logo.png</file>
+        <file>license.html</file>
     </qresource>
 </RCC>

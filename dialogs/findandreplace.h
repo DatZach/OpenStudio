@@ -1,6 +1,6 @@
 /**
-* @file  welcomewidget.cpp
-* @brief Source implementing a class for a welcome widget.
+* @file  findandreplace.h
+* @brief Header implementing a class for a find and replace dialog.
 *
 * @section License
 *
@@ -21,19 +21,25 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include "welcomewidget.h"
-#include "ui_welcomewidget.h"
+#ifndef FINDANDREPLACE_H
+#define FINDANDREPLACE_H
 
-WelcomeWidget::WelcomeWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::WelcomeWidget)
-{
-    ui->setupUi(this);
-    this->setWindowTitle("Welcome");
-    ui->webView->setUrl(QUrl("http://msdn.microsoft.com"));
+#include <QDialog>
+
+namespace Ui {
+class FindAndReplace;
 }
 
-WelcomeWidget::~WelcomeWidget()
+class FindAndReplace : public QDialog
 {
-    delete ui;
-}
+    Q_OBJECT
+    
+public:
+    explicit FindAndReplace(QWidget *parent = 0);
+    ~FindAndReplace();
+    
+private:
+    Ui::FindAndReplace *ui;
+};
+
+#endif // FINDANDREPLACE_H

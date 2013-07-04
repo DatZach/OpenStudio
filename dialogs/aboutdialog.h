@@ -24,11 +24,9 @@
 #ifndef ABOUTDIALOG_H
 #define ABOUTDIALOG_H
 
+#include <QVBoxLayout>
 #include <QDialog>
-
-namespace Ui {
-class AboutDialog;
-}
+#include <QTextEdit>
 
 class AboutDialog : public QDialog
 {
@@ -37,9 +35,9 @@ class AboutDialog : public QDialog
 public:
     explicit AboutDialog(QWidget *parent = 0);
     ~AboutDialog();
-    
+    void show(char* path, char* title);
 private:
-    Ui::AboutDialog *ui;
+    QTextEdit* browser;
 };
 
 #endif // ABOUTDIALOG_H
