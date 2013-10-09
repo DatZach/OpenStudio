@@ -22,6 +22,8 @@
 **/
 
 #include <QHeaderView>
+#include <QFileDialog>
+#include <QSettings>
 #include "mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -40,8 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* newAction = new QAction(QIcon(":icons/icons/page_white_add.png"), "&New file or project", this);
     connect(newAction, SIGNAL(triggered()), this, SLOT(newProject()));
     QAction* openAction = new QAction(QIcon(":icons/icons/folder.png"), "&Open existing file or project", this);
+    connect(openAction, SIGNAL(triggered()), this, SLOT(showOpenDialog()));
     QAction* saveAction = new QAction(QIcon(":icons/icons/save.png"), "&Save the current file", this);
+    connect(saveAction, SIGNAL(triggered()), this, SLOT(showSaveDialog()));
     QAction* saveasAction = new QAction(QIcon(":icons/icons/save-as.png"), "Open existing file or project", this);
+     connect(saveasAction, SIGNAL(triggered()), this, SLOT(showSaveDialog()));
     QAction* saveallAction = new QAction(QIcon(":icons/icons/save-all.png"), "Save &All open files", this);
     QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "&Exit", this);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApplication()));
@@ -63,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QAction* mdiAction = new QAction("&Multiple Document Interface", this);
     connect(mdiAction, SIGNAL(triggered()), this, SLOT(toggleMdiTabs()));
+    QAction* restoreAction = new QAction("&Restore Layout", this);
+    connect(restoreAction, SIGNAL(triggered()), this, SLOT(restoreLayout()));
 
     QAction* manualAction = new QAction(QIcon(":icons/icons/manual.png"), "&Documentation", this);
     connect(manualAction, SIGNAL(triggered()), this, SLOT(showHelpViewer()));
@@ -72,6 +79,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(showAboutDialog()));
 
     fileToolbar = new QtToolBar();
+    fileToolbar->setObjectName("fileToolbar");
     fileToolbar->addAction(newAction);
     fileToolbar->addAction(openAction);
     fileToolbar->addAction(saveAction);
@@ -79,6 +87,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fileToolbar->setActionWidgetSize(26, 26);
     this->addToolBar(fileToolbar);
     editToolbar = new QtToolBar();
+    editToolbar->setObjectName("editToolbar");
     editToolbar->addAction(undoAction);
     editToolbar->addAction(redoAction);
     editToolbar->addAction(cutAction);
@@ -105,6 +114,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mainMenubar->addMenu(fileMenu);
     QMenu* viewMenu = new QMenu("&View");
     viewMenu->addAction(mdiAction);
+    viewMenu->addAction(restoreAction);
     mainMenubar->addMenu(viewMenu);
     QMenu* editMenu = new QMenu("&Edit");
     editMenu->addAction(undoAction);
@@ -129,30 +139,36 @@ MainWindow::MainWindow(QWidget *parent) :
     treeWidget = new QTreeWidget();
     treeWidget->setHeaderHidden(true);
     treeDock = new QDockWidget("Project");
+    treeDock->setObjectName("treeDock");
     treeDock->setWidget(treeWidget);
     this->addDockWidget(Qt::RightDockWidgetArea, treeDock);
     ToolBoxWidget* toolWidget = new ToolBoxWidget();
     toolDock = new QDockWidget("Toolbox");
+    toolDock->setObjectName("toolDock");
     toolDock->setWidget(toolWidget);
     this->addDockWidget(Qt::LeftDockWidgetArea, toolDock);
     propDock = new QDockWidget("Properties");
+    propDock->setObjectName("propDock");
     this->addDockWidget(Qt::LeftDockWidgetArea, propDock);
     evtDock = new QDockWidget("Events");
+    evtDock->setObjectName("evtDock");
     this->addDockWidget(Qt::RightDockWidgetArea, evtDock);
+    tabifyDockWidget(treeDock, propDock);
     tabifyDockWidget(treeDock, evtDock);
-    //tabifyDockWidget(propDock, evtDock);
     treeDock->raise();
     // this will make the tabs ontop of the right dock widget area instead of on bottom
     // they look better on bottom
     //this->setTabPosition(Qt::RightDockWidgetArea, QTabWidget::North);
 
     outputDock = new QDockWidget("Output");
+    outputDock->setObjectName("outputDock");
     outputWidget = new QTextEdit();
     outputWidget->setText("This will be ouput displayed by a compiler...");
     outputWidget->setReadOnly(true);
     outputDock->setWidget(outputWidget);
     this->addDockWidget(Qt::BottomDockWidgetArea, outputDock);
     messagesDock = new QDockWidget("Messages");
+    messagesDock->setObjectName("messagesDock");
     messagesWidget = new QTableWidget();
     messagesWidget->setColumnCount(4);
     QStringList headers;
@@ -206,6 +222,9 @@ MainWindow::MainWindow(QWidget *parent) :
     messagesDock->setVisible(false);
     propDock->setVisible(false);
 
+    this->setObjectName("mainWindow");
+    defaultState = this->saveState();
+    this->readSettings();
 }
 
 MainWindow::~MainWindow()
@@ -213,6 +232,32 @@ MainWindow::~MainWindow()
 
 }
 
+void MainWindow::closeApplication() {
+    this->writeSettings();
+    this->close();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings("LateralGMTeam", "LateralGM");
+    restoreGeometry(settings.value("mainWindow/geometry").toByteArray());
+    restoreState(settings.value("mainWindowState").toByteArray());
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings("LateralGMTeam", "LateralGM");
+   settings.setValue("mainWindow/geometry", saveGeometry());
+    settings.setValue("mainWindowState", saveState());
+}
+
+void MainWindow::restoreLayout() {
+    this->restoreState(defaultState);
+}
 
 void MainWindow::newProject() {
     TemplateDialog* newSelector = new TemplateDialog();
@@ -227,8 +272,12 @@ void MainWindow::newProject() {
    // CreateScriptTab();
 }
 
-void MainWindow::closeApplication() {
-    this->close();
+void MainWindow::showOpenDialog() {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Project"), "", tr("All Files (*.*);;GMK Files (*.gmk)"));
+}
+
+void MainWindow::showSaveDialog() {
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Project"), "", tr("All Files (*.*);;GMK Files (*.gmk)"));
 }
 
 void MainWindow::showFindAndReplace() {

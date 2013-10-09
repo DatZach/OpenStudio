@@ -93,14 +93,25 @@ private:
     HelpViewer* helpViewer;
     FindAndReplace* fnrDialog;
 
+    QByteArray defaultState;
+
 public slots:
     void newProject();
+
     void closeApplication();
+    void closeEvent(QCloseEvent *event);
+    void readSettings();
+    void writeSettings();
+
+    void showOpenDialog();
+    void showSaveDialog();
     void showFindAndReplace();
     void showHelpViewer();
     void showLicenseDialog();
     void showAboutDialog();
+
     void toggleMdiTabs();
+    void restoreLayout();
     void undo();
     void redo();
     void cut();
