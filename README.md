@@ -1,6 +1,5 @@
 Open Studio
 ==================
-
 A free and open source project file editor with support for multiple formats including Visual Studio projects. The project
 is compiled with Qt Creator 5.1 and uses QScintilla for styled text highlighting.
 
