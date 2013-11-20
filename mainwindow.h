@@ -29,6 +29,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
+#include <QComboBox>
 #include <QTextEdit>
 #include <QTableWidget>
 #include <QStatusBar>
@@ -74,6 +75,8 @@ private:
     QStatusBar* mainStatusbar;
 
     QtToolBar* fileToolbar;
+    QtToolBar* buildToolbar;
+    QtToolBar* debugToolbar;
     QtToolBar* editToolbar;
 
     QMdiArea* mainMdiArea;

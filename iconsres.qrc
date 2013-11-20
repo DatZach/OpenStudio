@@ -25,6 +25,15 @@
         <file>icons/redo.png</file>
         <file>icons/manual.png</file>
         <file>icons/find.png</file>
+        <file>icons/stepinto.png</file>
+        <file>icons/stepout.png</file>
+        <file>icons/stepover.png</file>
+        <file>icons/debugstepover.png</file>
+        <file>icons/debugstepinto.png</file>
+        <file>icons/debugruntoline.png</file>
+        <file>icons/execute.png</file>
+        <file>icons/stop.png</file>
+        <file>icons/pause.png</file>
     </qresource>
     <qresource prefix="/">
         <file>logo.png</file>
