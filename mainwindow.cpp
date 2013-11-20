@@ -51,6 +51,29 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "&Exit", this);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApplication()));
 
+    QAction* prefsAction = new QAction(QIcon(":icons/icons/preferences.png"), "&Preferences", this);
+    connect(prefsAction, SIGNAL(triggered()), this, SLOT(showPreferencesDialog()));
+
+    QAction* stopAction = new QAction(QIcon(":icons/icons/stop.png"), "&Stop", this);
+    connect(stopAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* pauseAction = new QAction(QIcon(":icons/icons/pause.png"), "&Pause", this);
+    connect(pauseAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* executeAction = new QAction(QIcon(":icons/icons/execute.png"), "&Execute", this);
+    connect(executeAction, SIGNAL(triggered()), this, SLOT(cut()));
+
+    QAction* stepoverAction = new QAction(QIcon(":icons/icons/stepover.png"), "&Step Over", this);
+    connect(stepoverAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* stepintoAction = new QAction(QIcon(":icons/icons/stepinto.png"), "&Step Into", this);
+    connect(stepintoAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* stepoutofAction = new QAction(QIcon(":icons/icons/stepout.png"), "&Step Out Of", this);
+    connect(stepoutofAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* runtolineAction = new QAction(QIcon(":icons/icons/debugruntoline.png"), "&Run to Line", this);
+    connect(runtolineAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* debugstepoverAction = new QAction(QIcon(":icons/icons/debugstepover.png"), "&Debug Step Over", this);
+    connect(debugstepoverAction, SIGNAL(triggered()), this, SLOT(cut()));
+    QAction* debugstepintoAction = new QAction(QIcon(":icons/icons/debugstepinto.png"), "&Debug Step Into", this);
+    connect(debugstepintoAction, SIGNAL(triggered()), this, SLOT(cut()));
+
     QAction* cutAction = new QAction(QIcon(":icons/icons/cut.png"), "&Cut", this);
     connect(cutAction, SIGNAL(triggered()), this, SLOT(cut()));
     QAction* copyAction = new QAction(QIcon(":icons/icons/page_white_copy.png"), "&Copy", this);
@@ -86,6 +109,29 @@ MainWindow::MainWindow(QWidget *parent) :
     fileToolbar->addAction(saveallAction);
     fileToolbar->setActionWidgetSize(26, 26);
     this->addToolBar(fileToolbar);
+    buildToolbar = new QtToolBar();
+    buildToolbar->setObjectName("buildToolbar");
+    buildToolbar->addAction(stopAction);
+    buildToolbar->addAction(pauseAction);
+    buildToolbar->addAction(executeAction);
+    QStringList options;
+    options << "Release";
+    options << "Debug";
+    QComboBox* buildmodeCombo = new QComboBox();
+    buildmodeCombo->addItems(options);
+    buildToolbar->setActionWidgetSize(26, 26);
+    buildToolbar->addWidget(buildmodeCombo);
+    this->addToolBar(buildToolbar);
+    debugToolbar = new QtToolBar();
+    debugToolbar->setObjectName("debugToolbar");
+    debugToolbar->addAction(stepoverAction);
+    debugToolbar->addAction(stepintoAction);
+    debugToolbar->addAction(stepoutofAction);
+    debugToolbar->addAction(runtolineAction);
+    debugToolbar->addAction(debugstepoverAction);
+    debugToolbar->addAction(debugstepintoAction);
+    debugToolbar->setActionWidgetSize(26, 26);
+    this->addToolBar(debugToolbar);
     editToolbar = new QtToolBar();
     editToolbar->setObjectName("editToolbar");
     editToolbar->addAction(undoAction);
@@ -128,7 +174,9 @@ MainWindow::MainWindow(QWidget *parent) :
     mainMenubar->addMenu(editMenu);
     mainMenubar->addMenu("&Build");
     mainMenubar->addMenu("&Project");
-    mainMenubar->addMenu("&Compilers");
+    QMenu* toolsMenu = new QMenu("&Tools");
+    toolsMenu->addAction(prefsAction);
+    mainMenubar->addMenu(toolsMenu);
     QMenu* helpMenu = new QMenu("&Help");
     helpMenu->addAction(manualAction);
     helpMenu->addAction(licenseAction);
@@ -209,6 +257,7 @@ MainWindow::MainWindow(QWidget *parent) :
     outputMessage(MSG_WARNING, "example.cpp", "Line 553", "Lorem ipsum dolor sit amet...");
     outputMessage(MSG_NOTICE, "example.cpp", "Line 554", "Lorem ipsum dolor sit amet...");
 
+    preferencesDialog = NULL;
     aboutDialog = NULL;
     helpViewer = NULL;
     fnrDialog = NULL;
@@ -273,40 +322,48 @@ void MainWindow::newProject() {
 }
 
 void MainWindow::showOpenDialog() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Project"), "", tr("All Files (*.*);;GMK Files (*.gmk)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Project"), "", tr("All Files (*.*);;Visual Studio Solution (*.sln);;Code::Blocks Project (*.cbp)"));
 }
 
 void MainWindow::showSaveDialog() {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Project"), "", tr("All Files (*.*);;GMK Files (*.gmk)"));
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save Project"), "", tr("All Files (*.*);;Visual Studio Solution (*.sln);;Code::Blocks Project (*.cbp)"));
 }
 
 void MainWindow::showFindAndReplace() {
     if (fnrDialog == NULL) {
-        fnrDialog = new FindAndReplace();
+        fnrDialog = new FindAndReplace(this);
     }
     fnrDialog->show();
 }
 
 void MainWindow::showHelpViewer() {
     if (helpViewer == NULL) {
-        helpViewer = new HelpViewer();
+        helpViewer = new HelpViewer(this);
     }
     helpViewer->show();
 }
 
 void MainWindow::showLicenseDialog() {
     if (aboutDialog == NULL) {
-        aboutDialog = new AboutDialog();
+        aboutDialog = new AboutDialog(this);
     }
     aboutDialog->show(":/license.html", "License");
 }
 
 void MainWindow::showAboutDialog() {
     if (aboutDialog == NULL) {
-        aboutDialog = new AboutDialog();
+        aboutDialog = new AboutDialog(this);
     }
     aboutDialog->show(":/about.html", "About");
 }
+
+void MainWindow::showPreferencesDialog() {
+    if (preferencesDialog == NULL) {
+        preferencesDialog = new PreferencesDialog(this);
+    }
+    preferencesDialog->show();
+}
+
 
 void MainWindow::toggleMdiTabs() {
 

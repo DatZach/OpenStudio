@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     widgets/welcomewidget.cpp \
     dialogs/aboutdialog.cpp \
     dialogs/helpviewer.cpp \
-    dialogs/findandreplace.cpp
+    dialogs/findandreplace.cpp \
+    dialogs/preferencesdialog.cpp
 
 HEADERS  += mainwindow.h \
     customwidgets/qttoolbar.h \
@@ -33,12 +34,14 @@ HEADERS  += mainwindow.h \
     widgets/welcomewidget.h \
     dialogs/aboutdialog.h \
     dialogs/helpviewer.h \
-    dialogs/findandreplace.h
+    dialogs/findandreplace.h \
+    dialogs/preferencesdialog.h
 
 FORMS    += \
     widgets/welcomewidget.ui \
     dialogs/helpviewer.ui \
-    dialogs/findandreplace.ui
+    dialogs/findandreplace.ui \
+    dialogs/preferencesdialog.ui
 
 RESOURCES += \
     iconsres.qrc
