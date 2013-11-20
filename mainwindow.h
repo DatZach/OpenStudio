@@ -45,6 +45,7 @@
 #include "dialogs/helpviewer.h"
 #include "dialogs/aboutdialog.h"
 #include "dialogs/findandreplace.h"
+#include "dialogs/preferencesdialog.h"
 
 enum {
     MSG_ERROR,
@@ -95,6 +96,7 @@ private:
 
     HelpViewer* helpViewer;
     FindAndReplace* fnrDialog;
+    PreferencesDialog* preferencesDialog;
 
     QByteArray defaultState;
 
@@ -112,6 +114,7 @@ public slots:
     void showHelpViewer();
     void showLicenseDialog();
     void showAboutDialog();
+    void showPreferencesDialog();
 
     void toggleMdiTabs();
     void restoreLayout();

@@ -34,6 +34,7 @@
         <file>icons/execute.png</file>
         <file>icons/stop.png</file>
         <file>icons/pause.png</file>
+        <file>icons/preferences.png</file>
     </qresource>
     <qresource prefix="/">
         <file>logo.png</file>
