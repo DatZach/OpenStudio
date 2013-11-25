@@ -36,11 +36,12 @@ CodeWidget::CodeWidget(QWidget *parent) :
     this->setCaretLineVisible(true);
     this->setCaretLineBackgroundColor(QColor("#ffe4e4"));
 
-    QFont font = QFont("Courier 10 Pitch", 10);
+    QFont font = QFont("Courier", 8);
     font.setFixedPitch(true);
-    this->setFont(font);
+    //this->setFont(font);
     QsciLexerCPP lexer;
     lexer.setFont(font);
+    lexer.setFoldCompact(false);
     this->setLexer(&lexer);
 
     QFontMetrics fontmetrics = QFontMetrics(font);
