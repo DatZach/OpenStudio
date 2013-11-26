@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     dialogs/aboutdialog.cpp \
     dialogs/helpviewer.cpp \
     dialogs/findandreplace.cpp \
-    dialogs/preferencesdialog.cpp
+    dialogs/preferencesdialog.cpp \
+    widgets/filetree.cpp \
+    widgets/filenode.cpp
 
 HEADERS  += mainwindow.h \
     customwidgets/qttoolbar.h \
@@ -35,7 +37,9 @@ HEADERS  += mainwindow.h \
     dialogs/aboutdialog.h \
     dialogs/helpviewer.h \
     dialogs/findandreplace.h \
-    dialogs/preferencesdialog.h
+    dialogs/preferencesdialog.h \
+    widgets/filetree.h \
+    widgets/filenode.h
 
 FORMS    += \
     widgets/welcomewidget.ui \

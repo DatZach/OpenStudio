@@ -33,10 +33,6 @@
 
 #include <QContextMenuEvent>
 
-namespace Ui {
-class CodeWidget;
-}
-
 class CodeWidget : public QsciScintilla
 {
     Q_OBJECT
