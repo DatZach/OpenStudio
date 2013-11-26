@@ -378,28 +378,35 @@ void MainWindow::toggleMdiTabs() {
     }
 }
 
+//TODO: Create an inheritable MdiChild class so this can handle more than just the code widget.
 void MainWindow::undo() {
-
+    if (CodeWidget *widget = qobject_cast<CodeWidget *>( mainMdiArea->activeSubWindow()->widget() ))
+        widget->undo();
 }
 
 void MainWindow::redo() {
-
+    if (CodeWidget *widget = qobject_cast<CodeWidget *>( mainMdiArea->activeSubWindow()->widget() ))
+        widget->redo();
 }
 
 void MainWindow::cut() {
-
+    if (CodeWidget *widget = qobject_cast<CodeWidget *>( mainMdiArea->activeSubWindow()->widget() ))
+        widget->cut();
 }
 
 void MainWindow::copy() {
-
+    if (CodeWidget *widget = qobject_cast<CodeWidget *>( mainMdiArea->activeSubWindow()->widget() ))
+        widget->copy();
 }
 
 void MainWindow::paste() {
-
+    if (CodeWidget *widget = qobject_cast<CodeWidget *>( mainMdiArea->activeSubWindow()->widget() ))
+        widget->paste();
 }
 
 void MainWindow::selectAll() {
-
+    if (CodeWidget *widget = qobject_cast<CodeWidget *>( mainMdiArea->activeSubWindow()->widget() ))
+        widget->selectAll();
 }
 
 void MainWindow::CreateScriptTab() {
