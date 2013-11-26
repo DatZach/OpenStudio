@@ -557,14 +557,14 @@ void MainWindow::updateRecentFileActions()
 
 void MainWindow::clearRecentFiles() {
     QSettings settings("OpenStudioTeam", "OpenStudio");
-    settings.setValue("recentFileList", NULL);
+    settings.setValue("recentFileList", 0);
 
     this->updateRecentFileActions();
 }
 
 void MainWindow::clearRecentProjects() {
     QSettings settings("OpenStudioTeam", "OpenStudio");
-    settings.setValue("recentProjectList", NULL);
+    settings.setValue("recentProjectList", 0);
 
     this->updateRecentFileActions();
 }
