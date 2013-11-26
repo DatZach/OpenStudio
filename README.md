@@ -15,4 +15,3 @@ visit http://www.gnu.org/licenses/
 Development Team
 ==================
 * Robert B. Colton - Project founder and developer.
-* Zachary Reedy - Project founder and developer.
