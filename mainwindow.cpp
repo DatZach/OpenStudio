@@ -45,6 +45,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction* openAction = new QAction(QIcon(":icons/icons/folder.png"), "&Open existing file or project", this);
     openAction->setShortcuts(QKeySequence::Open);
     connect(openAction, SIGNAL(triggered()), this, SLOT(showOpenDialog()));
+    QAction* clearRecentFilesAction = new QAction("Clear", this);
+    connect(clearRecentFilesAction, SIGNAL(triggered()), this, SLOT(clearRecentFiles()));
+    QAction* clearRecentProjectsAction = new QAction("Clear", this);
+    connect(clearRecentProjectsAction, SIGNAL(triggered()), this, SLOT(clearRecentProjects()));
     QAction* saveAction = new QAction(QIcon(":icons/icons/save.png"), "&Save the current file", this);
     saveAction->setShortcuts(QKeySequence::Save);
     connect(saveAction, SIGNAL(triggered()), this, SLOT(showSaveDialog()));
@@ -162,10 +166,28 @@ MainWindow::MainWindow(QWidget *parent) :
     //this->setStyleSheet("QMainWindow { background-color: white; }");
     mainStatusbar->addWidget(statusLabel);
     this->setStatusBar(mainStatusbar);
+
     mainMenubar = new QMenuBar();
     QMenu* fileMenu = new QMenu("&File");
     fileMenu->addAction(newAction);
     fileMenu->addAction(openAction);
+    for (int i = 0; i < MaxRecentFiles; ++i) {
+        recentFileActs[i] = new QAction(this);
+        recentFileActs[i]->setVisible(false);
+        connect(recentFileActs[i], SIGNAL(triggered()),
+                this, SLOT(cut()));
+    }
+    recentFilesMenu = new QMenu("&Recent Files");
+    for (int i = 0; i < MaxRecentFiles; ++i)
+        recentFilesMenu->addAction(recentFileActs[i]);
+    recentFilesMenu->addSeparator();
+    recentFilesMenu->addAction(clearRecentFilesAction);
+    fileMenu->addMenu(recentFilesMenu);
+    recentProjectsMenu = new QMenu("&Recent Projects");
+    recentProjectsMenu->addSeparator();
+    recentProjectsMenu->addAction(clearRecentProjectsAction);
+    fileMenu->addMenu(recentProjectsMenu);
+    this->updateRecentFileActions();
     fileMenu->addAction(saveAction);
     fileMenu->addAction(saveallAction);
     fileMenu->addSeparator();
@@ -197,7 +219,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mainMenubar->addMenu(helpMenu);
     this->setMenuBar(mainMenubar);
 
-    treeWidget = new QTreeWidget();
+    treeWidget = new FileTree();
     treeWidget->setHeaderHidden(true);
     treeDock = new QDockWidget("Project");
     treeDock->setObjectName("treeDock");
@@ -275,7 +297,7 @@ MainWindow::MainWindow(QWidget *parent) :
     helpViewer = NULL;
     fnrDialog = NULL;
 
-    CreateScriptTab();
+    createScriptTab();
 
     treeDock->setVisible(false);
     evtDock->setVisible(false);
@@ -305,15 +327,15 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 void MainWindow::readSettings()
 {
-    QSettings settings("LateralGMTeam", "LateralGM");
+    QSettings settings("OpenStudioTeam", "OpenStudio");
     restoreGeometry(settings.value("mainWindow/geometry").toByteArray());
     restoreState(settings.value("mainWindowState").toByteArray());
 }
 
 void MainWindow::writeSettings()
 {
-    QSettings settings("LateralGMTeam", "LateralGM");
-   settings.setValue("mainWindow/geometry", saveGeometry());
+    QSettings settings("OpenStudioTeam", "OpenStudio");
+    settings.setValue("mainWindow/geometry", saveGeometry());
     settings.setValue("mainWindowState", saveState());
 }
 
@@ -322,7 +344,7 @@ void MainWindow::restoreLayout() {
 }
 
 void MainWindow::newProject() {
-    TemplateDialog* newSelector = new TemplateDialog();
+    TemplateDialog* newSelector = new TemplateDialog(this);
     newSelector->show();
 
     treeDock->setVisible(true);
@@ -335,7 +357,21 @@ void MainWindow::newProject() {
 }
 
 void MainWindow::showOpenDialog() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Project"), "", tr("All Files (*.*);;Visual Studio Solution (*.sln);;Code::Blocks Project (*.cbp)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Project"), "",
+      tr("All Files (*.*);;" \
+         "Visual Studio Solution (*.sln);;"\
+         "Code::Blocks Project (*.cbp)"));
+
+    QSettings settings("OpenStudioTeam", "OpenStudio");
+    QStringList files = settings.value("recentFileList").toStringList();
+    files.removeAll(fileName);
+    files.prepend(fileName);
+    while (files.size() > MaxRecentFiles)
+        files.removeLast();
+
+    settings.setValue("recentFileList", files);
+
+    this->updateRecentFileActions();
 }
 
 void MainWindow::showSaveDialog() {
@@ -422,7 +458,7 @@ void MainWindow::selectAll() {
         widget->selectAll();
 }
 
-void MainWindow::CreateScriptTab() {
+void MainWindow::createScriptTab() {
     CodeWidget* codeWidget = new CodeWidget();
     mainMdiArea->addSubWindow(codeWidget, Qt::WindowTitleHint);
 }
@@ -480,6 +516,7 @@ void MainWindow::addResourceGroup(QString name)
     treeItem = new QTreeWidgetItem();
     treeItem->setText(0, name);
     treeItem->setIcon(0, QIcon(":/icons/icons/folder.png"));
+    treeItem->setFlags(Qt::NoItemFlags | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     treeWidget->addTopLevelItem(treeItem);
 }
 
@@ -489,5 +526,50 @@ void MainWindow::addResource(QString name, QIcon icon)
     treeItem = new QTreeWidgetItem();
     treeItem->setText(0, name);
     treeItem->setIcon(0, icon);
+    treeItem->setFlags(Qt::NoItemFlags | Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     treeWidget->addTopLevelItem(treeItem);
+}
+
+void MainWindow::updateRecentFileActions()
+{
+    QSettings settings("OpenStudioTeam", "OpenStudio");
+    QStringList files = settings.value("recentFileList").toStringList();
+
+    int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
+
+    if (numRecentFiles == 0) {
+        recentFilesMenu->setEnabled(false);
+    } else {
+        recentFilesMenu->setEnabled(true);
+    }
+
+    recentProjectsMenu->setEnabled(false);
+
+    for (int i = 0; i < numRecentFiles; ++i) {
+        //QString text = tr("&%1 %2").arg(i + 1).arg(strippedName(files[i]));
+        recentFileActs[i]->setText(files[i]);
+        recentFileActs[i]->setData(files[i]);
+        recentFileActs[i]->setVisible(true);
+    }
+    for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
+        recentFileActs[j]->setVisible(false);
+}
+
+void MainWindow::clearRecentFiles() {
+    QSettings settings("OpenStudioTeam", "OpenStudio");
+    settings.setValue("recentFileList", NULL);
+
+    this->updateRecentFileActions();
+}
+
+void MainWindow::clearRecentProjects() {
+    QSettings settings("OpenStudioTeam", "OpenStudio");
+    settings.setValue("recentProjectList", NULL);
+
+    this->updateRecentFileActions();
+}
+
+QString MainWindow::strippedName(const QString &fullFileName)
+{
+    return QFileInfo(fullFileName).fileName();
 }

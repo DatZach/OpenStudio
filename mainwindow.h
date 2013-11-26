@@ -36,12 +36,12 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 #include <QDockWidget>
-#include <QTreeWidget>
 
 #include "customwidgets/qttoolbar.h"
 #include "widgets/toolboxwidget.h"
 #include "widgets/codewidget.h"
 #include "widgets/welcomewidget.h"
+#include "widgets/filetree.h"
 #include "dialogs/templatedialog.h"
 #include "dialogs/helpviewer.h"
 #include "dialogs/aboutdialog.h"
@@ -62,7 +62,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void CreateScriptTab();
+    void createScriptTab();
     void outputClear(bool clearLog = true, bool clearMessages = true);
     void outputText(QString text);
     void outputLine(QString text);
@@ -76,6 +76,9 @@ private:
     QMenuBar* mainMenubar;
     QStatusBar* mainStatusbar;
 
+    QMenu* recentFilesMenu;
+    QMenu* recentProjectsMenu;
+
     QtToolBar* fileToolbar;
     QtToolBar* buildToolbar;
     QtToolBar* debugToolbar;
@@ -86,7 +89,7 @@ private:
     QDockWidget* propDock;
     QDockWidget* evtDock;
     QDockWidget* treeDock;
-    QTreeWidget* treeWidget;
+    FileTree* treeWidget;
     ToolBoxWidget* toolWidget;
     QDockWidget* toolDock;
 
@@ -125,6 +128,19 @@ public slots:
     void copy();
     void paste();
     void selectAll();
+
+    void clearRecentFiles();
+    void clearRecentProjects();
+
+private:
+    void loadFile(const QString &fileName);
+    void saveFile(const QString &fileName);
+    void setCurrentFile(const QString &fileName);
+    QString strippedName(const QString &fullFileName);
+    void updateRecentFileActions();
+
+    enum { MaxRecentFiles = 5 };
+    QAction *recentFileActs[MaxRecentFiles];
 };
 
 #endif // MAINWINDOW_H
