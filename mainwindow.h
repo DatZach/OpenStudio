@@ -34,6 +34,7 @@
 #include <QTableWidget>
 #include <QStatusBar>
 #include <QMdiArea>
+#include <QMdiSubWindow>
 #include <QDockWidget>
 #include <QTreeWidget>
 
