@@ -71,16 +71,22 @@ CodeWidget::CodeWidget(QWidget *parent) :
     //this->setLayout(layout);
 
     QAction* cutAction = new QAction(QIcon(":icons/icons/cut.png"), "&Cut", this);
+    cutAction->setShortcuts(QKeySequence::Cut);
     connect(cutAction, SIGNAL(triggered()), this, SLOT(cut()));
     QAction* copyAction = new QAction(QIcon(":icons/icons/page_white_copy.png"), "&Copy", this);
+    copyAction->setShortcuts(QKeySequence::Copy);
     connect(copyAction, SIGNAL(triggered()), this, SLOT(copy()));
     QAction* pasteAction = new QAction(QIcon(":icons/icons/paste_plain.png"), "&Paste", this);
+    pasteAction->setShortcuts(QKeySequence::Paste);
     connect(pasteAction, SIGNAL(triggered()), this, SLOT(paste()));
     QAction* undoAction = new QAction(QIcon(":icons/icons/undo.png"), "&Undo", this);
+    undoAction->setShortcuts(QKeySequence::Undo);
     connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
     QAction* redoAction = new QAction(QIcon(":icons/icons/redo.png"), "&Redo", this);
+    redoAction->setShortcuts(QKeySequence::Redo);
     connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
     QAction* selectallAction = new QAction("Select &All", this);
+    selectallAction->setShortcuts(QKeySequence::SelectAll);
     connect(selectallAction, SIGNAL(triggered()), this, SLOT(selectAll()));
 
     editMenu = new QMenu("&Edit");
