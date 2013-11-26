@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Find and Replace</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
@@ -35,6 +35,88 @@
       <attribute name="title">
        <string>Find</string>
       </attribute>
+      <widget class="QComboBox" name="comboBox">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>0</y>
+         <width>311</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>0</y>
+         <width>61</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Search:</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>50</y>
+         <width>120</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Scope</string>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>50</y>
+         <width>135</width>
+         <height>119</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Options</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>Match case</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_2">
+          <property name="text">
+           <string>Regular expression</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_3">
+          <property name="text">
+           <string>Auto-wrap at EOF</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="checkBox_4">
+          <property name="text">
+           <string>Multi-line search</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">

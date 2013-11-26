@@ -40,15 +40,20 @@ MainWindow::MainWindow(QWidget *parent) :
     setCorner( Qt::BottomRightCorner, Qt::RightDockWidgetArea );
 
     QAction* newAction = new QAction(QIcon(":icons/icons/page_white_add.png"), "&New file or project", this);
+    newAction->setShortcuts(QKeySequence::New);
     connect(newAction, SIGNAL(triggered()), this, SLOT(newProject()));
     QAction* openAction = new QAction(QIcon(":icons/icons/folder.png"), "&Open existing file or project", this);
+    openAction->setShortcuts(QKeySequence::Open);
     connect(openAction, SIGNAL(triggered()), this, SLOT(showOpenDialog()));
     QAction* saveAction = new QAction(QIcon(":icons/icons/save.png"), "&Save the current file", this);
+    saveAction->setShortcuts(QKeySequence::Save);
     connect(saveAction, SIGNAL(triggered()), this, SLOT(showSaveDialog()));
     QAction* saveasAction = new QAction(QIcon(":icons/icons/save-as.png"), "Open existing file or project", this);
-     connect(saveasAction, SIGNAL(triggered()), this, SLOT(showSaveDialog()));
+    saveasAction->setShortcuts(QKeySequence::SaveAs);
+    connect(saveasAction, SIGNAL(triggered()), this, SLOT(showSaveDialog()));
     QAction* saveallAction = new QAction(QIcon(":icons/icons/save-all.png"), "Save &All open files", this);
     QAction* exitAction = new QAction(QIcon(":icons/icons/exit.png"), "&Exit", this);
+    exitAction->setShortcuts(QKeySequence::Quit);
     connect(exitAction, SIGNAL(triggered()), this, SLOT(closeApplication()));
 
     QAction* prefsAction = new QAction(QIcon(":icons/icons/preferences.png"), "&Preferences", this);
@@ -75,18 +80,25 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(debugstepintoAction, SIGNAL(triggered()), this, SLOT(cut()));
 
     QAction* cutAction = new QAction(QIcon(":icons/icons/cut.png"), "&Cut", this);
+    cutAction->setShortcuts(QKeySequence::Cut);
     connect(cutAction, SIGNAL(triggered()), this, SLOT(cut()));
     QAction* copyAction = new QAction(QIcon(":icons/icons/page_white_copy.png"), "&Copy", this);
+    copyAction->setShortcuts(QKeySequence::Copy);
     connect(copyAction, SIGNAL(triggered()), this, SLOT(copy()));
     QAction* pasteAction = new QAction(QIcon(":icons/icons/paste_plain.png"), "&Paste", this);
+    pasteAction->setShortcuts(QKeySequence::Paste);
     connect(pasteAction, SIGNAL(triggered()), this, SLOT(paste()));
     QAction* undoAction = new QAction(QIcon(":icons/icons/undo.png"), "&Undo", this);
+    undoAction->setShortcuts(QKeySequence::Undo);
     connect(undoAction, SIGNAL(triggered()), this, SLOT(undo()));
     QAction* redoAction = new QAction(QIcon(":icons/icons/redo.png"), "&Redo", this);
+    redoAction->setShortcuts(QKeySequence::Redo);
     connect(redoAction, SIGNAL(triggered()), this, SLOT(redo()));
     QAction* selectallAction = new QAction("Select &All", this);
+    selectallAction->setShortcuts(QKeySequence::SelectAll);
     connect(selectallAction, SIGNAL(triggered()), this, SLOT(selectAll()));
     QAction* fnrAction = new QAction(QIcon(":icons/icons/find.png"), "&Find and Replace", this);
+    fnrAction->setShortcuts(QKeySequence::Find);
     connect(fnrAction, SIGNAL(triggered()), this, SLOT(showFindAndReplace()));
 
     QAction* mdiAction = new QAction("&Multiple Document Interface", this);
@@ -95,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(restoreAction, SIGNAL(triggered()), this, SLOT(restoreLayout()));
 
     QAction* manualAction = new QAction(QIcon(":icons/icons/manual.png"), "&Documentation", this);
+    manualAction->setShortcuts(QKeySequence::HelpContents);
     connect(manualAction, SIGNAL(triggered()), this, SLOT(showHelpViewer()));
     QAction* licenseAction = new QAction("&License", this);
     connect(licenseAction, SIGNAL(triggered()), this, SLOT(showLicenseDialog()));
